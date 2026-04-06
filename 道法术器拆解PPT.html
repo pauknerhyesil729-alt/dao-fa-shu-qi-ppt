@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学生AI破局提效课 - 道法术器拆解</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================== VIEWPORT FITTING =========================================== */
+        html, body { height: 100%; overflow-x: hidden; cursor: none; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column; position: relative;
+            opacity: 1; transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .slide.prev { opacity: 0; transform: translateY(-20px); }
+        .slide.next { opacity: 0; transform: translateY(20px); }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+        }
+
+        :root {
+            --title-size: clamp(2rem, 6vw, 4.5rem);
+            --h2-size: clamp(1.5rem, 4vw, 2.8rem);
+            --h3-size: clamp(1.2rem, 3vw, 2rem);
+            --body-size: clamp(0.9rem, 1.8vw, 1.3rem);
+            --small-size: clamp(0.75rem, 1.1vw, 0.95rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+        }
+
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(0.8rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.6rem, 5vw, 2.8rem); --h2-size: clamp(1.2rem, 3.2vw, 1.8rem); --body-size: clamp(0.85rem, 1.6vw, 1.1rem); }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        /* =========================================== GALAXY CURSOR - ENHANCED =========================================== */
+        .cursor-core {
+            position: fixed; width: 24px; height: 24px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); transition: transform 0.03s ease-out;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(212,165,116,0.5);
+        }
+        .cursor-glow {
+            position: fixed; width: 60px; height: 60px;
+            background: radial-gradient(circle, rgba(212,165,116,0.4) 0%, rgba(232,180,184,0.2) 30%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 9997;
+            transform: translate(-50%, -50%); filter: blur(8px);
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes glowPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; } }
+        .cursor-trail {
+            position: fixed; width: 8px; height: 8px; border-radius: 50%;
+            pointer-events: none; z-index: 9998;
+            animation: trailExplode 0.8s ease-out forwards;
+        }
+        @keyframes trailExplode {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+        .cursor-star {
+            position: fixed; width: 4px; height: 4px;
+            background: radial-gradient(circle, #fff 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 9996;
+            animation: starBurst 1.2s ease-out forwards;
+        }
+        @keyframes starBurst {
+            0% { opacity: 1; transform: scale(1) translate(0,0); }
+            100% { opacity: 0; transform: scale(0) translate(var(--tx), var(--ty)); }
+        }
+        @media (max-width: 768px) { body { cursor: auto; } .cursor-core, .cursor-glow, .cursor-trail, .cursor-star { display: none !important; } }
+
+        /* =========================================== COLORS - 深色星空主题 =========================================== */
+        :root {
+            --bg-primary: #08080c; --bg-secondary: #0e0e15; --bg-gradient-1: #06060a; --bg-gradient-2: #0a0a12;
+            --text-primary: #f5f0e8; --text-secondary: #a8a098; --text-muted: #5a5550;
+            --accent-gold: #d4a574; --accent-amber: #e8b584; --accent-copper: #c9956c;
+            --accent-sapphire: #5d8aa8; --accent-teal: #5fada8; --accent-rose: #c47d7d;
+            --glow-gold: rgba(212, 165, 116, 0.4); --glow-amber: rgba(232, 181, 132, 0.3);
+            --glow-sapphire: rgba(93, 138, 168, 0.3); --glow-teal: rgba(95, 173, 168, 0.3);
+            --anim-fast: 0.3s; --anim-normal: 0.6s; --anim-slow: 1.2s;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', 'Noto Serif SC', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; }
+
+        /* =========================================== DYNAMIC BACKGROUND - 星河 =========================================== */
+        .bg-layer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -10; overflow: hidden; }
+        .stars { position: absolute; width: 100%; height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 200px 50px, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 250px 160px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 300px 90px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 350px 200px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(2px 2px at 400px 140px, rgba(255,255,255,0.9), transparent);
+            background-size: 450px 250px; animation: starsMove 80s linear infinite;
+        }
+        @keyframes starsMove { from { transform: translateY(0); } to { transform: translateY(-250px); } }
+        .nebula { position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(ellipse 60% 40% at 15% 75%, rgba(212,165,116,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 50% at 85% 25%, rgba(232,180,184,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 30% at 60% 65%, rgba(93,138,168,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 45% 35% at 35% 20%, rgba(95,173,168,0.07) 0%, transparent 50%);
+            animation: nebulaPulse 20s ease-in-out infinite;
+        }
+        @keyframes nebulaPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(60px); animation: orbFloat 25s ease-in-out infinite; }
+        .orb-1 { width: 55vw; height: 55vw; background: radial-gradient(circle, var(--glow-gold) 0%, transparent 60%); top: -25%; left: -15%; }
+        .orb-2 { width: 45vw; height: 45vw; background: radial-gradient(circle, var(--glow-amber) 0%, transparent 60%); bottom: -15%; right: -10%; animation-delay: -8s; }
+        .orb-3 { width: 35vw; height: 35vw; background: radial-gradient(circle, var(--glow-sapphire) 0%, transparent 60%); top: 25%; right: 10%; animation-delay: -16s; }
+        .orb-4 { width: 28vw; height: 28vw; background: radial-gradient(circle, var(--glow-teal) 0%, transparent 60%); bottom: 15%; left: 5%; animation-delay: -12s; }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(40px,-50px) scale(1.08); }
+            50% { transform: translate(-30px,40px) scale(0.95); }
+            75% { transform: translate(50px,30px) scale(1.04); }
+        }
+        .grain { position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.025; pointer-events: none; z-index: -5; }
+
+        /* =========================================== TYPOGRAPHY =========================================== */
+        .display-font { font-family: 'Noto Serif SC', serif; font-weight: 600; letter-spacing: 0.02em; }
+        h1 { font-family: 'Noto Serif SC', serif; font-size: var(--title-size); font-weight: 600; line-height: 1.15; color: var(--text-primary); }
+        h2 { font-family: 'Noto Serif SC', serif; font-size: var(--h2-size); font-weight: 500; line-height: 1.25; color: var(--text-primary); margin-bottom: var(--content-gap); }
+        h3 { font-family: 'Noto Sans SC', sans-serif; font-size: var(--h3-size); font-weight: 500; color: var(--accent-gold); margin-bottom: var(--element-gap); }
+        p, li { font-size: var(--body-size); color: var(--text-secondary); line-height: 1.65; }
+
+        /* Title glow animation */
+        .title-glow { animation: titleGlow 4s ease-in-out infinite; }
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(212,165,116,0.3), 0 0 60px rgba(212,165,116,0.1); }
+            50% { text-shadow: 0 0 40px rgba(212,165,116,0.5), 0 0 80px rgba(212,165,116,0.2), 0 0 100px rgba(232,180,184,0.1); }
+        }
+
+        /* =========================================== ANIMATIONS =========================================== */
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.95); transition: opacity var(--anim-normal) var(--ease-out-expo), transform var(--anim-normal) var(--ease-out-expo); }
+        .visible .reveal { opacity: 1; transform: translateY(0) scale(1); }
+        .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; } .reveal-delay-5 { transition-delay: 0.5s; } .reveal-delay-6 { transition-delay: 0.6s; }
+        .reveal-delay-7 { transition-delay: 0.7s; } .reveal-delay-8 { transition-delay: 0.8s; }
+
+        @keyframes floatUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .float-animation { animation: floatUp 6s ease-in-out infinite; }
+
+        @keyframes floatDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+        .float-down { animation: floatDown 7s ease-in-out infinite; }
+
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(212,165,116,0.1), transparent); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+
+        /* =========================================== LAYOUT =========================================== */
+        .center-content { text-align: center; align-items: center; }
+        .slide-content { gap: var(--content-gap); }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        .flex-row { display: flex; flex-direction: row; }
+        .gap-sm { gap: var(--element-gap); }
+        .gap-md { gap: var(--content-gap); }
+
+        /* =========================================== CARDS - 玻璃拟态卡片 =========================================== */
+        .card {
+            background: rgba(14, 14, 21, 0.6); backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 165, 116, 0.15);
+            border-radius: clamp(16px, 2vw, 24px);
+            padding: clamp(1.2rem, 3vw, 2rem);
+            transition: all var(--anim-fast) var(--ease-out-expo);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,165,116,0.4), transparent);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(232, 180, 184, 0.35);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 30px var(--glow-gold), 0 0 60px rgba(232,180,184,0.15);
+        }
+
+        /* =========================================== COMPONENT STYLES =========================================== */
+        .tag {
+            display: inline-block;
+            padding: 0.4em 1em;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            border-radius: 100px;
+            font-size: var(--small-size);
+            color: var(--accent-gold);
+            letter-spacing: 0.05em;
+        }
+
+        .number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 600;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(212, 165, 116, 0.3);
+            line-height: 1;
+        }
+
+        .divider {
+            width: 80px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            margin: var(--content-gap) auto;
+        }
+
+        .quote-mark {
+            font-size: clamp(4rem, 15vw, 8rem);
+            color: rgba(212, 165, 116, 0.15);
+            line-height: 0.8;
+            font-family: Georgia, serif;
+        }
+
+        /* =========================================== LISTS =========================================== */
+        .feature-list { list-style: none; display: flex; flex-direction: column; gap: var(--content-gap); }
+        .feature-list li {
+            display: flex; align-items: flex-start; gap: var(--element-gap);
+            padding-left: 0.3em;
+        }
+        .feature-list li::before {
+            content: '◆'; color: var(--accent-gold);
+            font-size: 0.6em; margin-top: 0.5em;
+            opacity: 0.8;
+        }
+
+        .check-list { list-style: none; display: flex; flex-direction: column; gap: var(--element-gap); }
+        .check-list li {
+            display: flex; align-items: center; gap: var(--element-gap);
+            padding: 0.6em 1em;
+            background: rgba(14, 14, 21, 0.4);
+            border-radius: 8px;
+            border-left: 2px solid var(--accent-gold);
+        }
+        .check-list li::before {
+            content: '✓'; color: var(--accent-gold);
+            font-weight: 600; margin-right: 0.3em;
+        }
+
+        /* =========================================== GRID LAYOUTS =========================================== */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--content-gap); }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--content-gap); }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--element-gap); }
+        @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+        /* =========================================== HIGHLIGHTS =========================================== */
+        .highlight { color: var(--accent-gold); font-weight: 500; }
+        .highlight-soft { color: var(--accent-amber); }
+        .text-muted { color: var(--text-muted); }
+
+        /* =========================================== NAVIGATION =========================================== */
+        .nav-dots {
+            position: fixed; right: 2rem; top: 50%;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 0.75rem;
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(212, 165, 116, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-dot.active { background: var(--accent-gold); transform: scale(1.3); }
+        .nav-dot:hover { background: rgba(212, 165, 116, 0.6); }
+
+        .keyboard-hint {
+            position: fixed; bottom: 1.5rem; left: 50%;
+            transform: translateX(-50%);
+            font-size: var(--small-size); color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .nav-dots { right: 1rem; }
+            .keyboard-hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Galaxy Cursor -->
+    <div class="cursor-core"></div>
+    <div class="cursor-glow"></div>
+
+    <!-- Background Layers -->
+    <div class="bg-layer">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="gradient-orb orb-4"></div>
+        <div class="stars"></div>
+        <div class="nebula"></div>
+        <div class="grain"></div>
+    </div>
+
+    <!-- Slide 1: Cover -->
+    <section class="slide" id="slide-1">
+        <div class="slide-content center-content">
+            <div class="reveal">
+                <span class="tag">AI 认知升维</span>
+            </div>
+            <h1 class="display-font title-glow reveal reveal-delay-1">道法术器</h1>
+            <h1 class="display-font title-glow reveal reveal-delay-2">拆解课</h1>
+            <div class="divider reveal reveal-delay-3"></div>
+            <p class="reveal reveal-delay-4" style="font-size: var(--body-size); color: var(--text-secondary);">
+                大学生AI破局提效课 · 核心方法论
+            </p>
+            <p class="reveal reveal-delay-5 text-muted" style="font-size: var(--small-size); margin-top: 1rem;">
+                按 ↓ 或空格键继续
+            </p>
+        </div>
+    </section>
+
+    <!-- Slide 2: 身份 -->
+    <section class="slide" id="slide-2">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">WHO IS HE</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">授课者</h2>
+            <div class="grid-2" style="margin-top: var(--content-gap);">
+                <div class="card reveal reveal-delay-2">
+                    <h3>何锦成</h3>
+                    <p style="margin-top: var(--element-gap);">
+                        深圳职业技术大学云计算专业大二<br>
+                        自媒体创业者，曾用AI拿到结果<br>
+                        现在专注AI培训，帮助大学生提效
+                    </p>
+                </div>
+                <div class="card reveal reveal-delay-3">
+                    <h3>核心理念</h3>
+                    <p style="margin-top: var(--element-gap);">
+                        大学是旷野，不是只用来刷学历的<br>
+                        AI是第二大脑，不是工具箱<br>
+                        学会技能马上去展示、去变现
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: 道 - 人生的本质是旷野 -->
+    <section class="slide" id="slide-3">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">DAO - 底层世界观</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">人生的本质是旷野</h2>
+            <div class="card reveal reveal-delay-2" style="max-width: 800px; margin: 0 auto;">
+                <p style="font-size: var(--h3-size); line-height: 1.8;">
+                    <span class="highlight">我们很多人把大学过窄了</span>，就盯着学历、考研、保研。但说实话，<span class="highlight-soft">哪怕你学历搞定了，你就能改变命运吗？概率很低。</span>
+                </p>
+                <p style="margin-top: var(--content-gap);">
+                    真正的玩法是——你通过学AI这个技能，去拿到<span class="highlight">钱、关系、技能、影响力</span>。这四条路是相通的。
+                </p>
+                <p style="margin-top: var(--content-gap);" class="text-muted">
+                    只搞定学历是最窄的一条路。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: 道 - AI不是工具是第二大脑 -->
+    <section class="slide" id="slide-4">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">DAO - 底层世界观</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">AI不是工具，是你的第二大脑</h2>
+            <div class="card reveal reveal-delay-2" style="max-width: 800px; margin: 0 auto;">
+                <p style="font-size: var(--h3-size); line-height: 1.8;">
+                    你有没有发现一个问题——你跟AI聊久了，哪怕它是Claude哪怕它是ChatGPT，<span class="highlight">它都会变笨</span>？它会开始遗忘上下文，你聊了十几万字之后，它给你的回答质量明显下降。
+                </p>
+                <p style="margin-top: var(--content-gap);">
+                    那我们怎么突破这个局限性？<span class="highlight">用文件管理代替记忆</span>。
+                </p>
+                <p style="margin-top: var(--element-gap);" class="text-muted">
+                    你跟AI聊的过程，就是<span class="highlight-soft">不断对齐和压缩</span>的过程。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: 法 - 站在巨人的肩膀上 -->
+    <section class="slide" id="slide-5">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">FA - 方法论</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">站在巨人的肩膀上</h2>
+            <div class="card reveal reveal-delay-2">
+                <p style="font-size: var(--h3-size); line-height: 1.8;">
+                    我做AI分身的方法，就是去<span class="highlight">GitHub上找经过验证的项目</span>。我去提取别人已经验证过的东西，然后根据自己的需求改。
+                </p>
+                <ul class="feature-list" style="margin-top: var(--content-gap);">
+                    <li class="reveal reveal-delay-3">先找已经验证过的方案</li>
+                    <li class="reveal reveal-delay-4">提取核心框架</li>
+                    <li class="reveal reveal-delay-5">根据自己的情况调整</li>
+                    <li class="reveal reveal-delay-6">在实践中迭代进化</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: 法 - 压缩与对齐 -->
+    <section class="slide" id="slide-6">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">FA - 方法论</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">压缩与对齐</h2>
+            <div class="grid-2" style="margin-top: var(--content-gap);">
+                <div class="card reveal reveal-delay-2">
+                    <h3>压缩</h3>
+                    <p style="margin-top: var(--element-gap);">
+                        聊了5万字，其中4.8万字是<span class="highlight">磨损</span>，你只需要把最后那2000字提炼出来就够了。
+                    </p>
+                </div>
+                <div class="card reveal reveal-delay-3">
+                    <h3>对齐</h3>
+                    <p style="margin-top: var(--element-gap);">
+                        把你的认知跟<span class="highlight">正确的知识</span>对齐。你没搞懂一个概念，是因为你的认知没跟教材对齐，没跟老师对齐。
+                    </p>
+                </div>
+            </div>
+            <p class="reveal reveal-delay-4 text-muted center-content" style="margin-top: var(--content-gap);">
+                对齐之后，记下来，就是你的了。
+            </p>
+        </div>
+    </section>
+
+    <!-- Slide 7: 术 -->
+    <section class="slide" id="slide-7">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">SHU - 具体技巧</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">现在就能用</h2>
+            <ul class="check-list" style="margin-top: var(--content-gap);">
+                <li class="reveal reveal-delay-2">AI分身搭建：用文件夹管理替代AI记忆</li>
+                <li class="reveal reveal-delay-3">重要的事情说三遍：提示词里关键约束强调三遍</li>
+                <li class="reveal reveal-delay-4">先完成再完美：别追求一步到位，先跑通再迭代</li>
+                <li class="reveal reveal-delay-5">一鱼多吃：帮别人时沉淀工作流</li>
+                <li class="reveal reveal-delay-6">语音输入：win+H，效率提升好几倍</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Slide 8: 器 -->
+    <section class="slide" id="slide-8">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">QI - 工具清单</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">工具库</h2>
+            <div class="grid-4" style="margin-top: var(--content-gap);">
+                <div class="card center-content reveal reveal-delay-2">
+                    <span class="number">01</span>
+                    <p style="margin-top: var(--element-gap);">Claude Code</p>
+                </div>
+                <div class="card center-content reveal reveal-delay-3">
+                    <span class="number">02</span>
+                    <p style="margin-top: var(--element-gap);">Cursor</p>
+                </div>
+                <div class="card center-content reveal reveal-delay-4">
+                    <span class="number">03</span>
+                    <p style="margin-top: var(--element-gap);">牛马AI</p>
+                </div>
+                <div class="card center-content reveal reveal-delay-5">
+                    <span class="number">04</span>
+                    <p style="margin-top: var(--element-gap);">豆包</p>
+                </div>
+            </div>
+            <p class="reveal reveal-delay-6 text-muted center-content" style="margin-top: var(--content-gap);">
+                GitHub · 住宅IP · Claude Code · 语音输入
+            </p>
+        </div>
+    </section>
+
+    <!-- Slide 9: 金句 -->
+    <section class="slide" id="slide-9">
+        <div class="slide-content center-content">
+            <div class="reveal">
+                <span class="tag">金句</span>
+            </div>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="reveal reveal-delay-1">
+                    <span class="quote-mark">"</span>
+                </div>
+                <p class="reveal reveal-delay-2" style="font-size: var(--h2-size); line-height: 1.6; margin: var(--content-gap) 0;">
+                    人生的本质是旷野，<br>
+                    <span class="highlight">大学也是旷野</span>，别把自己过窄了。
+                </p>
+                <div class="divider reveal reveal-delay-3"></div>
+                <p class="reveal reveal-delay-4" style="font-size: var(--body-size); color: var(--text-secondary);">
+                    站在巨人的肩膀上，我们不需要重新发明轮子。
+                </p>
+                <p class="reveal reveal-delay-5" style="font-size: var(--body-size); color: var(--text-secondary); margin-top: var(--element-gap);">
+                    学会了一个技能马上去展示，去获得影响力，去获得关系，去赚点钱。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: 行动清单 -->
+    <section class="slide" id="slide-10">
+        <div class="slide-content">
+            <div class="reveal">
+                <span class="tag">ACTION</span>
+            </div>
+            <h2 class="reveal reveal-delay-1">今天就能做的三件事</h2>
+            <div class="grid-3" style="margin-top: var(--content-gap);">
+                <div class="card center-content reveal reveal-delay-2">
+                    <span class="number" style="font-size: clamp(2rem, 6vw, 3rem);">01</span>
+                    <h3 style="margin-top: var(--element-gap);">装好AI分身</h3>
+                    <p style="margin-top: var(--element-gap); font-size: var(--small-size);">
+                        按照行动手册来，把文件管理架构搭好
+                    </p>
+                </div>
+                <div class="card center-content reveal reveal-delay-3">
+                    <span class="number" style="font-size: clamp(2rem, 6vw, 3rem);">02</span>
+                    <h3 style="margin-top: var(--element-gap);">装上道法术器skill</h3>
+                    <p style="margin-top: var(--element-gap); font-size: var(--small-size);">
+                        找一篇文章拆一下试试手
+                    </p>
+                </div>
+                <div class="card center-content reveal reveal-delay-4">
+                    <span class="number" style="font-size: clamp(2rem, 6vw, 3rem);">03</span>
+                    <h3 style="margin-top: var(--element-gap);">语音输入用起来</h3>
+                    <p style="margin-top: var(--element-gap); font-size: var(--small-size);">
+                        win+H，效率提升好几倍
+                    </p>
+                </div>
+            </div>
+            <p class="reveal reveal-delay-5 center-content text-muted" style="margin-top: var(--content-gap);">
+                你不动手，听100节都没用。
+            </p>
+        </div>
+    </section>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots">
+        <div class="nav-dot active" data-slide="1"></div>
+        <div class="nav-dot" data-slide="2"></div>
+        <div class="nav-dot" data-slide="3"></div>
+        <div class="nav-dot" data-slide="4"></div>
+        <div class="nav-dot" data-slide="5"></div>
+        <div class="nav-dot" data-slide="6"></div>
+        <div class="nav-dot" data-slide="7"></div>
+        <div class="nav-dot" data-slide="8"></div>
+        <div class="nav-dot" data-slide="9"></div>
+        <div class="nav-dot" data-slide="10"></div>
+    </nav>
+
+    <!-- Keyboard Hint -->
+    <div class="keyboard-hint">← → 空格键或滑鼠滚轮切换</div>
+
+    <script>
+        /* =========================================== CURSOR TRAIL EFFECT =========================================== */
+        const cursorCore = document.querySelector('.cursor-core');
+        const cursorGlow = document.querySelector('.cursor-glow');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+
+            cursorCore.style.left = cursorX + 'px';
+            cursorCore.style.top = cursorY + 'px';
+            cursorGlow.style.left = cursorX + 'px';
+            cursorGlow.style.top = cursorY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Trail stars
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.7) {
+                const star = document.createElement('div');
+                star.className = 'cursor-star';
+                star.style.left = e.clientX + 'px';
+                star.style.top = e.clientY + 'px';
+                star.style.setProperty('--tx', (Math.random() - 0.5) * 30 + 'px');
+                star.style.setProperty('--ty', (Math.random() - 0.5) * 30 + 'px');
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 1200);
+            }
+        });
+
+        /* =========================================== SLIDE NAVIGATION =========================================== */
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.nav-dot');
+        let currentSlide = 0;
+
+        function goToSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+
+            slides[currentSlide].classList.add('prev');
+            slides[currentSlide].classList.remove('visible');
+            dots[currentSlide].classList.remove('active');
+
+            currentSlide = index;
+
+            slides.forEach((slide, i) => {
+                slide.classList.remove('prev', 'next');
+                if (i < currentSlide) slide.classList.add('prev');
+                if (i > currentSlide) slide.classList.add('next');
+            });
+
+            slides[currentSlide].classList.add('visible');
+            dots[currentSlide].classList.add('active');
+
+            slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Keyboard nav
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                goToSlide(currentSlide + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // Wheel nav
+        let wheelTimeout;
+        document.addEventListener('wheel', (e) => {
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+                if (e.deltaY > 0) goToSlide(currentSlide + 1);
+                else if (e.deltaY < 0) goToSlide(currentSlide - 1);
+            }, 50);
+        }, { passive: true });
+
+        // Dot nav
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => goToSlide(i));
+        });
+
+        // Initialize
+        slides.forEach((slide, i) => {
+            if (i === 0) slide.classList.add('visible');
+            else slide.classList.add('next');
+        });
+
+        /* =========================================== OBSERVER FOR REVEAL ANIMATIONS =========================================== */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+    </script>
+</body>
+</html>
